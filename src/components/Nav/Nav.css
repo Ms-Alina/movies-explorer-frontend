@@ -1,0 +1,170 @@
+.nav {
+  display: grid;
+  align-items: center;
+  justify-content: space-between;
+  grid-template-columns: 260px min-content;
+  width: 100%;
+}
+
+.nav__default {
+  padding-bottom: 3px;
+  grid-column: 2/-1;
+}
+
+.nav__route {
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  text-decoration: none;
+  color: #000;
+  transition: all 0.1s linear;
+}
+
+.nav__movies-route_active {
+  font-weight: 500;
+}
+
+.nav__route:hover {
+  opacity: 0.6;
+}
+
+.nav__route-btn {
+  padding: 8px 20px;
+  margin-left: 30px;
+  color: #FFFFFF;
+  background-color: #3456F3;
+  border-radius: 3px;
+  transition: all 0.1s linear;
+}
+
+.nav__route-btn:hover {
+  opacity: 0.6;
+}
+
+.nav__movies {
+  padding-left: 44px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-self: center;
+  grid-column: 1/2;
+}
+
+.nav__movies-route {
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 18px;
+  text-decoration: none;
+  color: #000;
+  transition: all 0.1s linear;
+}
+
+.nav__route_active {
+  font-weight: 500;
+}
+
+.nav__route-account {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 16px;
+
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border: 2px solid #aaaaaa;
+  border-radius: 50px;
+  padding: 6px 11px;
+  grid-column: 3/-1;
+}
+
+.nav__route-main {
+  display: none;
+}
+
+@media screen and (max-width: 768px) {
+  .nav {
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    grid-template-columns: none;
+    grid-template-rows: 11% 76.5% 12.5%;
+    width: 100%;
+  }
+
+  .nav__movies {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    align-self: start;
+    grid-row: 2/3;
+    padding-left: 0;
+  }
+
+  .nav__route {
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 16px;
+    text-decoration: none;
+    position: relative;
+  }
+
+  .nav__route-box {
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 22px;
+    text-decoration: none;
+    position: relative;
+    color: #000;
+  }
+
+  .nav__route-main {
+    display: block;
+  }
+
+  .nav__route-box_active::after {
+    content: '';
+    position: absolute;
+    border-bottom: 2px solid black;
+    width: 100%;
+    top: 26px;
+    left: 0;
+  }
+
+  .nav__route-account {
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 16px;
+
+    justify-self: center;
+    border: 2px solid #aaaaaa;
+    border-radius: 50px;
+    padding: 6px 11px;
+    align-self: start;
+    grid-row: 3/-1;
+  }
+
+  .nav__default {
+    height: 12px;
+    padding-bottom: 0;
+  }
+}
+
+@media screen and (max-width: 540px) {
+  .nav {
+    grid-template-rows: 12% 77.1% 9.9%;
+  }
+
+  .nav__route-btn {
+    padding: 7px 12px;
+    margin-left: 14px;
+  }
+
+  .nav__movies {
+    gap: 24px;
+  }
+
+  .nav__route-box_active::after {
+    top: 29px;
+    left: 0;
+  }
+}
