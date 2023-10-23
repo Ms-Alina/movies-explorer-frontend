@@ -5,7 +5,7 @@ import ArrowLink from '../../images/arrow-link.svg';
 const Portfolio = () => {
   return (
     <section className="portfolio">
-      <h3 className="portfolio__section-title">Портфолио</h3>
+      <h2 className="portfolio__section-title">Портфолио</h2>
 
       <div className="portfolio__links">
         <a

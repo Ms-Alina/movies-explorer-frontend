@@ -84,6 +84,16 @@
   }
 }
 
+@media screen and (max-width: 660px) {
+  .techs__badges {
+    font-size: 12px;
+    line-height: 15px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(84px, 84px));
+    margin: 0 auto;
+  }
+}
+
 @media screen and (max-width: 460px) {
   .techs {
     padding: 71px 18px;
@@ -110,14 +120,6 @@
   .techs__description-text {
     font-size: 11px;
     line-height: 16px;
-  }
-
-  .techs__badges {
-    font-size: 12px;
-    line-height: 15px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(84px, 84px));
-    margin: 0 auto;
   }
 }
 
