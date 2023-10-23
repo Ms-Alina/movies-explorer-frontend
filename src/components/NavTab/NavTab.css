@@ -1,0 +1,34 @@
+.navtab {
+  width: 100%;
+  min-height: 66px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #F5F5F5;
+}
+
+.navtab__link {
+  text-decoration: none;
+  color: #000;
+  font: 500 13px/16px 'Inter', sans-serif;
+  border-bottom: 2px solid black;
+  margin-right: 40.5px;
+  text-align: center;
+  transition: all 0.2s linear;
+}
+
+.navtab__link:last-child {
+  margin-right: 0;
+}
+
+.navtab__link:hover {
+  opacity: 0.6;
+}
+
+@media screen and (max-width: 460px) {
+  .navtab__link {
+    margin-right: 24px;
+    font-size: 11px;
+    line-height: 12px;
+  }
+}
