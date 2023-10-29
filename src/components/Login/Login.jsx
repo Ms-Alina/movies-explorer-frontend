@@ -1,14 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useFormAndValidation } from '../../hooks/useFormAndValidation';
 import './Login.css';
 import Logo from '../../images/logo.svg';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { validateEmail } from '../../utils/validation';
 
-const Login = () => {
+const Login = ({ onLogin, isLoggedIn, apiErrors }) => {
   const { values, handleChange, errors, isValid } = useFormAndValidation();
-  const onLogin = (val) => {
-    console.log(val);
-  };
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate('/movies');
+    }
+  /* eslint-disable react-hooks/exhaustive-deps */
+  }, [isLoggedIn]);
 
   return (
     <section className="login-page">
@@ -41,12 +47,8 @@ const Login = () => {
               maxLength="40"
               required
             />
-            <span
-              className={`form__input-error ${
-                isValid ? '' : 'form__input-error_active'
-              }`}
-            >
-              {errors.email}
+            <span className={`form__input-error form__input-error_active`}>
+              {validateEmail(values.email).message}
             </span>
           </div>
 
@@ -73,18 +75,28 @@ const Login = () => {
             >
               {errors.password}
             </span>
+            <span className="form__api-error">
+              {apiErrors.login.message === 'Failed to fetch'
+                ? 'При авторизации произошла ошибка.'
+                : apiErrors.login.errorText}
+            </span>
+          </div>
+
+          <button
+            type="submit"
+            className="form__btn"
+            disabled={!isValid || validateEmail(values.email).invalid}
+          >
+              Войти
+          </button>
+
+          <div className="login-page__text">
+            <span>Ещё не зарегистрированы? </span>
+            <Link to="/signup" className="login-page__link">
+              Регистрация
+            </Link>
           </div>
         </form>
-      </div>
-      <button type="submit" className="form__btn">
-          Войти
-      </button>
-
-      <div className="login-page__text">
-        <span>Ещё не зарегистрированы? </span>
-        <Link to="/signup" className="login-page__link">
-          Регистрация
-        </Link>
       </div>
     </section>
   );
