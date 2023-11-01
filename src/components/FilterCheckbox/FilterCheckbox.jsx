@@ -1,7 +1,7 @@
 import React from 'react';
 import './FilterCheckbox.css';
 
-const FilterCheckbox = ({ isChecked, onCheck }) => {
+const FilterCheckbox = ({ onFilter, isShortMovies }) => {
   return (
     <>
       <div className="filter-checkbox">
@@ -9,8 +9,8 @@ const FilterCheckbox = ({ isChecked, onCheck }) => {
           className="filter-checkbox__input" 
           type="checkbox" 
           id="switch"
-          onChange={onCheck}
-          checked={isChecked || ''}
+          onChange={onFilter}
+          checked={isShortMovies}
         />
         <label 
           className="filter-checkbox__label" 

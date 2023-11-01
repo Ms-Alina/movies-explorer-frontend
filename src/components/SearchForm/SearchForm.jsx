@@ -1,53 +1,37 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import './SearchForm.css';
 import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
 import IconFind from '../../images/find.svg';
 
-const SearchForm = ({ onFilter, searchQuery, onResetInput, apiErrors }) => {
-  const [searchText, setSearchText] = useState('');
-  const [error, setError] = useState('');
+// const SearchForm = ({ onSearchMovies, onFilter, isShortMovies, onResetInput }) => {
+const SearchForm = ({ onSearchMovies, onFilter, isShortMovies }) => {
+  const [isQueryError, setIsQueryError] = useState(false);
+  const [query, setQuery] = useState('');
+  const location = useLocation();
 
-  const isChecked = JSON.parse(localStorage.getItem('filterCheckBox'));
-  const [isShortFilmChecked, setIsShortFilmChecked] = useState(isChecked);
-
-  useEffect(() => {
-    if (searchQuery.searchText) {
-      setSearchText(searchQuery.searchText);
-    }
-  }, [searchQuery.searchText]);
-
-  const handleChange = (e) => {
-    setSearchText(e.target.value);
+  const handleChangeQuery = (e) => {
+    setQuery(e.target.value);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!searchText) {
-      setError('Нужно ввести ключевое слово');
+    if (query.trim().length === 0) {
+      setIsQueryError(true);
       return;
     } else {
-      onFilter({ searchText, isShortFilmChecked });
+      setIsQueryError(false);
+      onSearchMovies(query);
     }
   };
 
-  const checkFilterBox = () => {
-    if (searchText !== '') {
-      setIsShortFilmChecked(!isShortFilmChecked);
-
-      onFilter({
-        searchText: searchText,
-        isShortFilmChecked: !isShortFilmChecked
-      });
-    } else {
-      setIsShortFilmChecked(!isShortFilmChecked);
-
-      onFilter({
-        searchText: searchQuery.searchText,
-        isShortFilmChecked: !isShortFilmChecked
-      });
+  useEffect(() => {
+    if (location.pathname === '/movies' && localStorage.getItem('movieSearch')) {
+      const localQuery = localStorage.getItem('movieSearch');
+      setQuery(localQuery);
     }
-  };
+  }, [location]);
 
   return (
     <div className="search">
@@ -58,37 +42,35 @@ const SearchForm = ({ onFilter, searchQuery, onResetInput, apiErrors }) => {
           // type="search"
           placeholder="Фильм"
           name="search"
-          value={searchText || ''}
-          required
+          value={query || ''}
+          // required
           min="1"
           autoComplete="off"
-          onChange={handleChange}
+          onChange={handleChangeQuery}
         />
 
-        {searchText && (
+        {/* {query && (
           <button
             className="search__form-reset-button"
             type="button"
             onClick={() => {
               onResetInput();
-              setSearchText('');
+              setQuery('');
             }}
           >
             Сброс
           </button>
-        )}
+        )} */}
 
-        <span className={`search__form-input-error`}>
-          {!searchText && error}
-        </span>
+        {isQueryError && <span className="search__form-input-error">Нужно ввести ключевое слово</span>}
       </div>
 
         <button type="submit" className="search__form-button">
           <img src={IconFind} alt="Изображение иконки поиска" />
         </button>
         <FilterCheckbox
-          isChecked={searchQuery.isShortFilmChecked}
-          onCheck={checkFilterBox}
+          onFilter={onFilter}
+          isShortMovies={isShortMovies}
         />
       </form>
     </div>

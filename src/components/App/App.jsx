@@ -3,7 +3,6 @@
 import './App.css';
 import { useState, useEffect } from 'react';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
-import { moviesApi } from '../../utils/MoviesApi';
 import { auth } from '../../utils/Auth';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import MainApi from '../../utils/MainApi';
@@ -56,6 +55,7 @@ function App() {
           if (res) {
             setIsLoggedIn(true);
             navigate(location.pathname);
+            localStorage.removeItem('allMovies');
             setIsLoading(false);
           }
         })
@@ -90,26 +90,6 @@ function App() {
           localStorage.setItem('savedMovies', JSON.stringify(data));
         })
         .catch((error) => console.log(error));
-  }, [isLoggedIn]);
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      if (localStorage.getItem('movies')) {
-        setMovies(JSON.parse(localStorage.getItem('movies')));
-      } else {
-        moviesApi
-          .getMovies()
-          .then((movies) => {
-            localStorage.setItem('movies', JSON.stringify(movies));
-            setMovies(movies);
-            setApiErrors({ ...apiErrors, movies: {} });
-          })
-          .catch((error) => {
-            setApiErrors({ ...apiErrors, movies: error });
-            console.log(error);
-          });
-      }
-    }
   }, [isLoggedIn]);
 
   useEffect(() => {

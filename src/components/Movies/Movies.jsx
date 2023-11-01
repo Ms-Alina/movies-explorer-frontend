@@ -2,111 +2,124 @@ import React, { useState, useEffect } from 'react';
 import './Movies.css';
 import SearchForm from '../SearchForm/SearchForm';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
-// import { moviesData } from '../../utils/movies.js';
-import Preloader from '../Preloader/Preloader';
+import { filterMovies, filterDuration } from '../../utils/utils';
 
-const Movies = ({ movies, savedMovies, onLikeMovie, apiErrors }) => {
-  const [filteredMovies, setFilteredMovies] = useState([]);
-  const [searchQuery, setSearchQuery] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
+import { moviesApi } from '../../utils/MoviesApi';
 
-  const searchedMovies = localStorage.getItem('searchedMovies');
-  const queries = localStorage.getItem('searchQueryMovies');
+const Movies = ({ savedMovies, onLikeMovie }) => {
+  const [isLoading, setIsLoading] = useState(false); //загрузка прелоадер
 
-  useEffect(() => {
-    if (searchedMovies) {
-      setFilteredMovies(JSON.parse(searchedMovies));
-    }
-  }, [searchedMovies]);
+  const [initialMovies, setInitialMovies] = useState([]); //отфильтрованные по запросу
+  const [filteredMovies, setFilteredMovies] = useState([]); //отфильтрованные по запросу и чекбоксу
+  const [isShortMovies, setIsShortMovies] = useState(false); //включен ли чекбокс короткометражек
+
+  const [isReqErr, setIsReqErr] = useState(false); //ошибка запроса к серверу
+  const [isNotFound, setIsNotFound] = useState(false); //фильмы по запросу не найдены
 
   useEffect(() => {
-    if (queries) {
-      setSearchQuery(JSON.parse(queries));
+    if (localStorage.getItem('shortMovies') === 'true') {
+      setIsShortMovies(true);
+    } else {
+      setIsShortMovies(false);
     }
-  }, [queries]);
+  }, []);
 
-  const filterMovies = (query) => {
-    if (!filteredMovies.length) {
+  useEffect(() => {
+    if (localStorage.getItem('movies')) {
+      const movies = JSON.parse(localStorage.getItem('movies'));
+      setInitialMovies(movies);
+      if (localStorage.getItem('shortMovies') === 'true') {
+        setFilteredMovies(filterDuration(movies));
+      } else {
+        setFilteredMovies(movies);
+      }
+    } else {
+      // setIsNotFound(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (localStorage.getItem('movieSearch')) {
+      if (filteredMovies.length === 0) {
+        setIsNotFound(true);
+      } else {
+        setIsNotFound(false);
+      }
+    } else {
+      setIsNotFound(false);
+    }
+  }, [filteredMovies]);
+
+  //основнай метод фильрации, который отдает массив с фильмами на рендеринг
+  function handleFilterMovies(movies, query, short) {
+    const moviesList = filterMovies(movies, query, short); //фильтруем полученный массив по запросу
+    setInitialMovies(moviesList); //записываем в стейт
+    setFilteredMovies(short ? filterDuration(moviesList) : moviesList); //если чекбокс тру, то фильруем по длине и записываем в стейт
+    localStorage.setItem('movies', JSON.stringify(moviesList));
+    localStorage.setItem('allMovies', JSON.stringify(movies));
+  }
+
+  function handleShortMovies() {
+    setIsShortMovies(!isShortMovies);
+    if (!isShortMovies) {
+      if (filterDuration(initialMovies).length === 0) {
+        setFilteredMovies(filterDuration(initialMovies));
+      } else {
+        setFilteredMovies(filterDuration(initialMovies));
+      }
+    } else {
+      setFilteredMovies(initialMovies);
+    }
+    localStorage.setItem('shortMovies', !isShortMovies);
+  }
+
+  function onSearchMovies(query) {
+    localStorage.setItem('movieSearch', query);
+    localStorage.setItem('shortMovies', isShortMovies);
+
+    if (localStorage.getItem('allMovies')) {
+      const movies = JSON.parse(localStorage.getItem('allMovies'));
+      handleFilterMovies(movies, query, isShortMovies);
+    } else {
       setIsLoading(true);
+      moviesApi
+        .getMovies()
+        .then((cardsData) => {
+          handleFilterMovies(cardsData, query, isShortMovies);
+          setIsReqErr(false);
+        })
+        .catch((err) => {
+          setIsReqErr(true);
+          console.log(err);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     }
-
-    // Задержка
-    setTimeout(() => {
-        let filtered = [];
-
-        localStorage.setItem('searchQueryMovies', JSON.stringify(query));
-
-        if (query.isShortFilmChecked) {
-          filtered = movies.filter((m) => {
-            return (
-              m.duration <= 40 &&
-              m.nameRU
-                .toLowerCase()
-                .trim()
-                .includes(query.searchText.toLowerCase())
-            );
-          });
-
-          setFilteredMovies(filtered);
-          localStorage.setItem('searchedMovies', JSON.stringify(filtered));
-        } else if (!query.isShortFilmChecked) {
-          filtered = movies.filter((m) => {
-            return m.nameRU
-              .toLowerCase()
-              .trim()
-              .includes(query.searchText.toLowerCase());
-          });
-
-          setFilteredMovies(filtered);
-          localStorage.setItem('searchedMovies', JSON.stringify(filtered));
-        }
-        setIsLoading(false);
-      },
-      filteredMovies.length ? 0 : 300
-    );
-  };
-
-  // От себя: сброс звначения инпута и истории поиска
-  const handleResetInput = () => {
-    setFilteredMovies([]);
-    setSearchQuery({});
-    localStorage.removeItem('searchedMovies');
-    localStorage.removeItem('searchQueryMovies');
-  };
+  }
+  // От себя: сброс значения инпута и истории поиска
+  // const handleResetInput = () => {
+  //   setFilteredMovies([]);
+  //   setInitialMovies([]);
+  // };
 
   return (
     <section className="movies">
       <SearchForm
-        onFilter={filterMovies}
-        searchQuery={searchQuery}
-        onResetInput={handleResetInput}
-        apiErrors={apiErrors}
+        onSearchMovies={onSearchMovies}
+        onFilter={handleShortMovies}
+        isShortMovies={isShortMovies}
+        // onResetInput={handleResetInput}
       />
 
-      {apiErrors?.movies && Object.keys(apiErrors?.movies).length !== 0 ? (
-        <p className="movies__api-error">
-          Во время запроса произошла ошибка. Возможно, проблема с соединением
-          или сервер недоступен. Подождите немного и попробуйте ещё раз
-        </p>
-      ) : (
-        ''
-      )}
-
-      {isLoading ? (
-        <Preloader />
-      ) : filteredMovies.length ? (
-        <MoviesCardList
-          movies={filteredMovies}
-          savedMovies={savedMovies}
-          onLikeMovie={onLikeMovie}
-        />
-      ) : (
-        searchedMovies && (
-          <p className="movies__not-found">
-            По вашему запросу ничего не найдено
-          </p>
-        )
-      )}
+      <MoviesCardList
+        movies={filteredMovies}
+        savedMovies={savedMovies}
+        onLikeMovie={onLikeMovie}
+        isNotFound={isNotFound}
+        isLoading={isLoading}
+        isReqErr={isReqErr}
+      />
     </section>
   );
 };
