@@ -79,8 +79,13 @@
   font-size: 14px;
   line-height: 17px;
   min-height: 45px;
-  margin: 179px 0 17px;
+  margin: 196px 0 17px;
   cursor: pointer;
+}
+
+.form__btn:disabled {
+  background: #f8f8f8;
+  color: #c2c2c2;
 }
 
 .form__btn:hover {
@@ -108,15 +113,7 @@
   position: relative;
 }
 
-.form__input-error {
-  font-weight: 400;
-  font-size: 10px;
-  line-height: 12px;
-  position: absolute;
-  margin: -20px 0;
-  max-width: 396px;
-}
-
+.form__input-error,
 .form__api-error {
   font-weight: 400;
   font-size: 10px;
@@ -158,7 +155,7 @@
 
   .form__btn {
     min-width: 260px;
-    margin: 267px 0 14px;
+    margin: 286px 0 14px;
     font-size: 12px;
     line-height: 15px;
   }
@@ -168,7 +165,8 @@
     line-height: 15px;
   }
 
-  .form__input-error {
+  .form__input-error,
+  .form__api-error {
     max-width: 260px;
   }
 }

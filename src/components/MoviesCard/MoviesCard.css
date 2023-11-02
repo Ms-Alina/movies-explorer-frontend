@@ -12,6 +12,7 @@
 }
 
 .moviescard__image {
+  min-width: 100%;
   max-height: 151px;
   vertical-align: bottom;
   transition: all 0.16s linear;
@@ -34,6 +35,10 @@
   font-weight: 500;
   font-size: 13px;
   line-height: 16px;
+  max-width: 90%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .moviescard__duration {
@@ -65,7 +70,6 @@
 
 .moviescard__delete-btn {
   background: no-repeat center/contain url('../../images/icon-close.svg');
-  display: none;
   padding: 0;
   margin: 0;
   width: 16px;
@@ -75,6 +79,11 @@
   position: absolute;
   top: 14px;
   right: 12px;
+}
+
+.moviescard__container {
+  min-width: 100%;
+  max-height: 151px;
 }
 
 .moviescard__container:hover .moviescard__delete-btn {

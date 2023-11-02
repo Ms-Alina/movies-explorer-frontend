@@ -38,6 +38,7 @@
 
 .not-found__back-btn {
   max-width: 42px;
+  all: unset;
   position: absolute;
   bottom: 58px;
   left: calc(100% / 2 - 21px);

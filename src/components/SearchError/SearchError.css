@@ -1,0 +1,9 @@
+.search__error {
+  text-align: center;
+  margin: 80px 0 0;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.2;
+  color: #000;
+}
